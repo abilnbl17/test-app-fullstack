@@ -1,35 +1,185 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fungsi untuk mengambil data karyawan dari backend
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        // Ganti dengan URL backend Spring Boot Anda jika berbeda
+        const response = await fetch("http://localhost:3001/api/employees");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setEmployees(data);
+      } catch (error) {
+        setError(error);
+        console.error("Error fetching employees:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []); // Array kosong berarti useEffect ini hanya berjalan sekali setelah render pertama
+
+  const getGenderLabel = (gender) => {
+    if (gender === 1) return "Pria";
+    if (gender === 2) return "Wanita";
+    return "Lainnya";
+  };
+
+  // Fungsi placeholder untuk aksi CRUD (Anda akan mengimplementasikan ini nanti)
+  const handleAddEmployee = () => {
+    alert("Fungsi Tambah Karyawan akan diimplementasikan di sini.");
+    // Navigasi ke form tambah atau tampilkan modal
+  };
+
+  const handleEditEmployee = (employeeId) => {
+    alert(
+      `Fungsi Edit Karyawan ID: ${employeeId} akan diimplementasikan di sini.`
+    );
+    // Navigasi ke form edit dengan data karyawan
+  };
+
+  const handleDeleteEmployee = async (employeeId) => {
+    if (
+      window.confirm(
+        `Apakah Anda yakin ingin menghapus karyawan ID: ${employeeId}?`
+      )
+    ) {
+      try {
+        // Panggil API soft delete
+        const response = await fetch(
+          `http://localhost:3001/api/employees/${employeeId}`,
+          {
+            method: "DELETE",
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        // Hapus karyawan dari state lokal setelah berhasil dihapus di backend
+        setEmployees(employees.filter((emp) => emp.id !== employeeId));
+        alert("Karyawan berhasil dihapus (soft delete).");
+      } catch (error) {
+        console.error("Error deleting employee:", error);
+        alert("Gagal menghapus karyawan. Lihat konsol untuk detail.");
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-lg text-gray-700">Memuat data karyawan...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-red-100 text-red-700">
+        <p className="text-lg">Error: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        Master Karyawan
+      </h1>
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleAddEmployee}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out"
+        >
+          + Tambah Karyawan
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      {employees.length === 0 ? (
+        <p className="text-center text-gray-600 text-lg">
+          Tidak ada data karyawan yang ditemukan.
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  No
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  Nama
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  Tanggal Lahir
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  Jabatan
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  NIP
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  Jenis Kelamin
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((employee, index) => (
+                <tr key={employee.id} className="hover:bg-gray-50 border-b">
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {index + 1}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {employee.name}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {employee.birthDate}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {employee.position ? employee.position.name : "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {employee.idNumber}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-800">
+                    {getGenderLabel(employee.gender)}
+                  </td>
+                  <td className="py-3 px-4 text-sm">
+                    <button
+                      onClick={() => handleEditEmployee(employee.id)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-md mr-2 text-xs transition duration-300 ease-in-out"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEmployee(employee.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-xs transition duration-300 ease-in-out"
+                    >
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
