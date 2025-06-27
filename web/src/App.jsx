@@ -5,11 +5,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fungsi untuk mengambil data karyawan dari backend
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        // Ganti dengan URL backend Spring Boot Anda jika berbeda
         const response = await fetch("http://localhost:3001/api/employees");
 
         if (!response.ok) {
@@ -26,7 +24,7 @@ function App() {
     };
 
     fetchEmployees();
-  }, []); // Array kosong berarti useEffect ini hanya berjalan sekali setelah render pertama
+  }, []); Array kosong berarti useEffect ini hanya berjalan sekali setelah render pertama
 
   const getGenderLabel = (gender) => {
     if (gender === 1) return "Pria";
@@ -34,17 +32,17 @@ function App() {
     return "Lainnya";
   };
 
-  // Fungsi placeholder untuk aksi CRUD (Anda akan mengimplementasikan ini nanti)
+ 
   const handleAddEmployee = () => {
     alert("Fungsi Tambah Karyawan akan diimplementasikan di sini.");
-    // Navigasi ke form tambah atau tampilkan modal
+  
   };
 
   const handleEditEmployee = (employeeId) => {
     alert(
       `Fungsi Edit Karyawan ID: ${employeeId} akan diimplementasikan di sini.`
     );
-    // Navigasi ke form edit dengan data karyawan
+
   };
 
   const handleDeleteEmployee = async (employeeId) => {
@@ -54,7 +52,7 @@ function App() {
       )
     ) {
       try {
-        // Panggil API soft delete
+      
         const response = await fetch(
           `http://localhost:3001/api/employees/${employeeId}`,
           {
@@ -64,7 +62,7 @@ function App() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        // Hapus karyawan dari state lokal setelah berhasil dihapus di backend
+     
         setEmployees(employees.filter((emp) => emp.id !== employeeId));
         alert("Karyawan berhasil dihapus (soft delete).");
       } catch (error) {
