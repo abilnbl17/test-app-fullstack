@@ -24,7 +24,7 @@ function App() {
     };
 
     fetchEmployees();
-  }, []); Array kosong berarti useEffect ini hanya berjalan sekali setelah render pertama
+  }, []);
 
   const getGenderLabel = (gender) => {
     if (gender === 1) return "Pria";
@@ -32,17 +32,14 @@ function App() {
     return "Lainnya";
   };
 
- 
   const handleAddEmployee = () => {
     alert("Fungsi Tambah Karyawan akan diimplementasikan di sini.");
-  
   };
 
   const handleEditEmployee = (employeeId) => {
     alert(
       `Fungsi Edit Karyawan ID: ${employeeId} akan diimplementasikan di sini.`
     );
-
   };
 
   const handleDeleteEmployee = async (employeeId) => {
@@ -52,7 +49,6 @@ function App() {
       )
     ) {
       try {
-      
         const response = await fetch(
           `http://localhost:3001/api/employees/${employeeId}`,
           {
@@ -62,7 +58,7 @@ function App() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-     
+
         setEmployees(employees.filter((emp) => emp.id !== employeeId));
         alert("Karyawan berhasil dihapus (soft delete).");
       } catch (error) {
