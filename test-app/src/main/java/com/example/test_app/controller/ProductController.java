@@ -34,22 +34,20 @@ public class ProductController {
       // mencari
       // produk
       // berdasarkan
-      // nama
-      // (GET
-      // /api/products/search?name=...)
-      //
-      // //
-      // Menggunakan
-      // HQL
-      // query
-      // kustom
-      // yang
-      // sudah
-      // kita
-      // definisikan
-      // di
-      // Repository
-      //
+
+    //
+    // //
+    // Menggunakan
+    // HQL
+    // query
+    // kustom
+    // yang
+    // sudah
+    // kita
+    // definisikan
+    // di
+    // Repository
+    //
 
     @GetMapping("/search")
     public List<Product> searchProducts(@RequestParam String name) {
